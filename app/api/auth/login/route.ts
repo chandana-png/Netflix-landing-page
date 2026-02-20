@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 
+interface User {
+  id: number;
+  email: string;
+  password_hash: string;
+}
+
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
@@ -17,7 +23,7 @@ export async function POST(req: Request) {
       "SELECT id, password_hash FROM users WHERE email = ? LIMIT 1",
       [email]
     );
-    const user = Array.isArray(rows) ? (rows as any[])[0] : null;
+    const user = Array.isArray(rows) ? (rows as User[])[0] : null;
     if (!user) {
       return NextResponse.json(
         { error: "Invalid email or password" },
